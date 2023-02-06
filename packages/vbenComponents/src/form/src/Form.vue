@@ -10,15 +10,14 @@ const formRef = ref(null)
 const props = defineProps({
   schemas: [],
   rules: {
-    type: Object,
-    Array,
+    type: Object || Array,
     default: {},
   },
 })
 const attrs = useAttrs()
-const getRules = computed(() => innerProps?.rules || props.rules)
+const getRules = computed(() => innerProps.value?.rules || props.rules)
 const setProps = (prop: Partial<VbenFormProps>) => {
-  prop.schemas.forEach((v) => {
+  prop.schemas?.forEach((v) => {
     if (v.defaultValue) {
       fieldValue.value[v.field] = v.defaultValue
     }
@@ -28,7 +27,9 @@ const setProps = (prop: Partial<VbenFormProps>) => {
       }
     }
   })
+
   innerProps.value = {
+    actions: false,
     ...prop,
     ...unref(innerProps),
   }
@@ -74,6 +75,13 @@ function getFieldValue() {
 const getGridItemProps = (p) => {
   return { span: getGridProps.value.span, ...p }
 }
+
+const getFormItemProps = (p) => {
+  const { labelProps } = p
+
+  return { ...labelProps }
+}
+
 // 默认grid参数
 const getGridProps = computed(() => {
   return {
@@ -116,6 +124,7 @@ onMounted(() => {
             :path="schema.field"
             :showRequireMark="schema.required"
             :rule="schema.rule"
+            v-bind="getFormItemProps(schema)"
           >
             <slot
               :name="schema.slot"
@@ -124,7 +133,7 @@ onMounted(() => {
             ></slot>
             <component
               v-if="
-                (schema.componentProps !== 'InputPassword' ||
+                (schema.component !== 'InputPassword' ||
                   schema.component !== 'InputTextArea') &&
                 !schema.slot
               "
@@ -145,6 +154,21 @@ onMounted(() => {
               v-model:value="fieldValue[schema.field]"
             />
           </VbenFormItem>
+        </VbenGridItem>
+        <VbenGridItem
+          v-if="innerProps?.schemas.length > 0 && innerProps.actions"
+          v-bind="innerProps.actionsProps"
+        >
+          <slot name="actions">
+            <VbenButtonGroup
+              ><VbenButton type="error" @click="formRef.restoreValidation">{{
+                innerProps.actionsProps.cancelText || '取消'
+              }}</VbenButton>
+              <VbenButton type="primary" @click="formRef.validate">{{
+                innerProps.actionsProps.submitText || '提交'
+              }}</VbenButton></VbenButtonGroup
+            >
+          </slot>
         </VbenGridItem>
       </VbenGrid>
     </Form>
