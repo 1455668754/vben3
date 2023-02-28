@@ -7,9 +7,8 @@ import {
   onKeyStroke,
 } from '@vben/utils'
 import { useI18n } from '@vben/locale'
-import { useGo } from '@vben/hooks'
-import { getMenus } from '@/router'
-import { useScrollTo } from '@/hooks/event/use-scroll-to'
+import { useGo, useScrollTo } from '@vben/hooks'
+import { context } from '../../../bridge'
 
 export interface SearchResult {
   name: string
@@ -64,7 +63,7 @@ export function useMenuSearch(
   const handleSearch = useDebounceFn(search, 200)
 
   onMounted(async () => {
-    const list = await getMenus()
+    const list = await context.getMenus()
 
     menuList = cloneDeep(list)
     forEachTree(menuList, (item) => {

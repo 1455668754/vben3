@@ -4,13 +4,13 @@ import type {
   Router,
 } from 'vue-router'
 import { toRaw, unref } from 'vue'
-import { defineStore } from '@vben/pinia'
+import { defineStore } from 'pinia'
 
 import { useGo, useRedo } from '@vben/hooks'
 // import { Persistent } from '/@/utils/cache/persistent';
 
 import { PageEnum } from '@vben/constants'
-import { PAGE_NOT_FOUND_ROUTE, REDIRECT_ROUTE } from '@/router/routes/basic'
+import { PAGE_NOT_FOUND_ROUTE, REDIRECT_ROUTE } from '@vben/router'
 import { getRawRoute, RemovableRef } from '@vben/utils'
 import { useUserStore } from '@/store/user'
 // import { useRouter, useRoute } from 'vue-router'
